@@ -77,6 +77,35 @@
   // Initialize viewer.
   var viewer = new Marzipano.Viewer(panoElement, viewerOpts);
 
+  // SKY_SURFER_LANDSCAPE_VIEWPORT_REFRESH_V1
+  var ssViewportRefreshTimer = null;
+  function ssRefreshPanoramaViewport() {
+    if (ssViewportRefreshTimer) {
+      clearTimeout(ssViewportRefreshTimer);
+      ssViewportRefreshTimer = null;
+    }
+
+    requestAnimationFrame(function() {
+      if (viewer && typeof viewer.updateSize === 'function') viewer.updateSize();
+      requestAnimationFrame(function() {
+        if (viewer && typeof viewer.updateSize === 'function') viewer.updateSize();
+      });
+    });
+
+    ssViewportRefreshTimer = setTimeout(function() {
+      ssViewportRefreshTimer = null;
+      if (viewer && typeof viewer.updateSize === 'function') viewer.updateSize();
+    }, 320);
+  }
+
+  window.addEventListener('orientationchange', ssRefreshPanoramaViewport);
+  window.addEventListener('resize', ssRefreshPanoramaViewport);
+  document.addEventListener('fullscreenchange', ssRefreshPanoramaViewport);
+  document.addEventListener('webkitfullscreenchange', ssRefreshPanoramaViewport);
+  if (window.visualViewport && window.visualViewport.addEventListener) {
+    window.visualViewport.addEventListener('resize', ssRefreshPanoramaViewport);
+  }
+
   // Create scenes.
   var scenes = data.scenes.map(function(data) {
     var urlPrefix = "tiles";
