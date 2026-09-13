@@ -830,6 +830,7 @@ body.view-control-buttons .viewControlButton {
 }
 
 
+/* SKY_SURFER_TOOLS_BUILD_V8_4 */
 /* ================================================================
    SKY_SURFER_PREVIEW_ENHANCER_V33
    Isolated Sky Surfer destination preview.
@@ -866,6 +867,19 @@ body.view-control-buttons .viewControlButton {
   transform: translateY(-50%) !important;
 }
 
+/* Transparent pointer bridge between the navigation hotspot and the preview.
+   This keeps the visual gap while making it easier to reach the card. */
+.ss-scene-preview-anchor::before {
+  content: '' !important;
+  position: absolute !important;
+  right: 100% !important;
+  top: 0 !important;
+  width: 12px !important;
+  height: 100% !important;
+  background: transparent !important;
+  pointer-events: auto !important;
+}
+
 .ss-scene-preview-card {
   display: block !important;
   width: 100% !important;
@@ -884,29 +898,56 @@ body.view-control-buttons .viewControlButton {
   overflow: hidden !important;
   box-sizing: border-box !important;
   box-shadow: 0 6px 22px rgba(0,0,0,.45) !important;
-  opacity: 0;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
   -ms-transform: translateX(-8px);
   -webkit-transform: translateX(-8px);
   transform: translateX(-8px);
-  -webkit-transition: opacity .2s ease, -webkit-transform .2s ease !important;
-  transition: opacity .2s ease, transform .2s ease !important;
+  -webkit-transition:
+    opacity .65s ease,
+    visibility 0s linear .65s,
+    -webkit-transform .42s ease !important;
+  transition:
+    opacity .65s ease,
+    visibility 0s linear .65s,
+    transform .42s ease !important;
 }
 
-.ss-scene-preview-image {
+.ss-scene-preview-media {
   display: block !important;
+  position: relative !important;
   width: 100% !important;
   min-width: 0 !important;
   max-width: 100% !important;
+  aspect-ratio: 16 / 9 !important;
   height: auto !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  aspect-ratio: auto !important;
-  object-fit: contain !important;
-  object-position: center !important;
   margin: 0 !important;
   padding: 0 !important;
   border: 0 !important;
   border-radius: 8px !important;
+  overflow: hidden !important;
+  background: #111 !important;
+  box-sizing: border-box !important;
+}
+
+.ss-scene-preview-image {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  aspect-ratio: auto !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
   box-sizing: border-box !important;
 }
 
@@ -929,21 +970,15 @@ body.view-control-buttons .viewControlButton {
   box-sizing: border-box !important;
 }
 
-.no-touch .link-hotspot:hover .ss-scene-preview-card {
-  opacity: 1;
-  -ms-transform: translateX(0);
-  -webkit-transform: translateX(0);
-  transform: translateX(0);
-}
-
 .link-hotspot {
   touch-action: manipulation;
 }
 
 .touch .link-hotspot.preview-visible .ss-scene-preview-card,
-.mobile .link-hotspot.preview-visible .ss-scene-preview-card,
-.link-hotspot.preview-visible .ss-scene-preview-card {
-  opacity: 1;
+.mobile .link-hotspot.preview-visible .ss-scene-preview-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 @media (hover: none), (pointer: coarse) {
@@ -959,14 +994,25 @@ body.view-control-buttons .viewControlButton {
   }
 
   .ss-scene-preview-card {
-    opacity: 0;
+    opacity: 0 !important;
+    visibility: hidden !important;
     -ms-transform: translateY(8px);
     -webkit-transform: translateY(8px);
     transform: translateY(8px);
   }
 
   .link-hotspot.preview-visible .ss-scene-preview-card {
-    opacity: 1;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    -webkit-transition:
+      opacity .18s ease,
+      visibility 0s linear 0s,
+      -webkit-transform .18s ease !important;
+    transition:
+      opacity .18s ease,
+      visibility 0s linear 0s,
+      transform .18s ease !important;
     -ms-transform: translateY(0);
     -webkit-transform: translateY(0);
     transform: translateY(0);
@@ -986,7 +1032,30 @@ body.view-control-buttons .viewControlButton {
   }
 }
 
+
+/* Corrected v8.2 desktop behavior: physical mouse movement only. */
+@media (hover: hover) and (pointer: fine) {
+  .link-hotspot.ss-standard-preview-visible .ss-scene-preview-card {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    -webkit-transition:
+      opacity .18s ease,
+      visibility 0s linear 0s,
+      -webkit-transform .18s ease !important;
+    transition:
+      opacity .18s ease,
+      visibility 0s linear 0s,
+      transform .18s ease !important;
+    -ms-transform: translateX(0) !important;
+    -webkit-transform: translateX(0) !important;
+    transform: translateX(0) !important;
+  }
+}
+
 /* Navigation arrow style: Classic Marzipano */
+/* Information icon style: Original Marzipano */
 /* Fullscreen button style: Classic Marzipano */
 
 /* Keep Marzipano's normal title-bar look, but let its own bar background
@@ -1068,7 +1137,7 @@ body.view-control-buttons .viewControlButton {
 }
 
 
-/* Sky Surfer v6.4 robust idle interface.
+/* Sky Surfer v8.2 robust idle interface.
    Runtime JS marks standard and recognized legacy/custom controls with
    .ss-idle-ui. Only opacity is animated; hotspot transforms remain untouched. */
 .ss-idle-ui {
@@ -1076,7 +1145,22 @@ body.view-control-buttons .viewControlButton {
   transition: opacity .24s ease !important;
 }
 
-body.ss-nav-hotspots-idle .ss-idle-ui {
+body.ss-nav-hotspots-idle .ss-idle-ui,
+body.ss-nav-hotspots-idle .link-hotspot,
+body.ss-nav-hotspots-idle #titleBar,
+body.ss-nav-hotspots-idle #sceneList,
+body.ss-nav-hotspots-idle #sceneListToggle,
+body.ss-nav-hotspots-idle #autorotateToggle,
+body.ss-nav-hotspots-idle #fullscreenToggle,
+body.ss-nav-hotspots-idle .viewControlButton,
+body.ss-nav-hotspots-idle #viewUp,
+body.ss-nav-hotspots-idle #viewDown,
+body.ss-nav-hotspots-idle #viewLeft,
+body.ss-nav-hotspots-idle #viewRight,
+body.ss-nav-hotspots-idle #viewIn,
+body.ss-nav-hotspots-idle #viewOut,
+body.ss-nav-hotspots-idle .ss-audio-player,
+body.ss-nav-hotspots-idle #player.player {
   opacity: 0 !important;
   pointer-events: none !important;
 }
@@ -1088,16 +1172,54 @@ body.ss-nav-hotspots-idle * {
   cursor: none !important;
 }
 
-/* Deliberately-open reading/navigation surfaces remain visible. */
-body.ss-nav-hotspots-idle #sceneList,
-body.ss-nav-hotspots-idle #sceneList .scenes,
-body.ss-nav-hotspots-idle #sceneList .scene,
+/* An opened information panel remains readable while ordinary navigation UI,
+   including an opened scene list, fades away. */
 body.ss-nav-hotspots-idle .info-hotspot,
 body.ss-nav-hotspots-idle .info-hotspot-modal {
   opacity: 1 !important;
 }
 
 
+/* Sky Surfer: Joyful Mysteries-style PHONE title wrapping.
+   Desktop stays unchanged. Phone titles use the same readable behavior as the
+   Joyful Mysteries project: one centered line when it fits, otherwise a centered
+   second line instead of an ellipsis. */
+@media (max-width: 768px) {
+  .mobile #titleBar {
+    height: 50px !important;
+  }
+
+  .mobile #titleBar .sceneName {
+    /* Override Marzipano's normal nowrap/ellipsis title treatment. */
+    display: flex !important;
+    -webkit-box-orient: initial !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+
+    /* Keep the existing left/right control clearance from the generated theme. */
+    width: auto !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+    margin: 0 !important;
+    padding: 4px 8px !important;
+
+    /* Allow up to two readable lines; never replace the title with "...". */
+    white-space: normal !important;
+    word-break: keep-all !important;
+    overflow-wrap: anywhere !important;
+    text-overflow: clip !important;
+    overflow: hidden !important;
+    line-height: 1.35 !important;
+
+    box-sizing: border-box !important;
+    unicode-bidi: plaintext;
+  }
+}
 /* Clean transparent autorotate control. Keep Marzipano's original white video-style play/pause artwork. */
 #autorotateToggle { background:transparent !important; background-color:transparent !important; border:0 !important; box-shadow:none !important; top:0 !important; right:40px !important; width:40px !important; height:40px !important; padding:0 !important; box-sizing:border-box !important; }
 #fullscreenToggle { top:0 !important; right:0 !important; width:40px !important; height:40px !important; box-sizing:border-box !important; }
